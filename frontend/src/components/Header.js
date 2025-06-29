@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { FaMoon, FaSun, FaHome, FaUser, FaLaptopCode, FaProjectDiagram, FaEnvelope } from "react-icons/fa";
 
@@ -7,33 +7,32 @@ const Header = ({ theme, toggleTheme }) => {
     const [activeLink, setActiveLink] = useState("home");
     const isDark = theme === "dark";
 
-    const navItems = [
+    const navItems = useMemo(() => [
         { id: "home", label: "Home", icon: <FaHome /> },
         { id: "about", label: "About", icon: <FaUser /> },
         { id: "skills", label: "Skills", icon: <FaLaptopCode /> },
         { id: "projects", label: "Projects", icon: <FaProjectDiagram /> },
         { id: "contact", label: "Contact", icon: <FaEnvelope /> },
-    ];
-
-    const handleScroll = () => {
-        const scrollY = window.scrollY;
-        for (let item of navItems) {
-            const section = document.getElementById(item.id);
-            if (section) {
-                const offset = section.offsetTop - 100;
-                const height = section.offsetHeight;
-                if (scrollY >= offset && scrollY < offset + height) {
-                    setActiveLink(item.id);
-                    break;
-                }
-            }
-        }
-    };
+    ], []);
 
     useEffect(() => {
+        const handleScroll = () => {
+            const scrollY = window.scrollY;
+            for (let item of navItems) {
+                const section = document.getElementById(item.id);
+                if (section) {
+                    const offset = section.offsetTop - 100;
+                    const height = section.offsetHeight;
+                    if (scrollY >= offset && scrollY < offset + height) {
+                        setActiveLink(item.id);
+                        break;
+                    }
+                }
+            }
+        };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+    }, [navItems]);
 
     return (
         <Navbar
